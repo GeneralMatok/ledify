@@ -1,3 +1,5 @@
+const db = require("./db.js");
+
 const getCSS = () => {
 
     return `
@@ -91,7 +93,8 @@ const getCSS = () => {
       `
 }
 
-const getHTML = (oVal) => {
+const getHTML = async (oVal) => {
+    const iEntries = await db.getEntries();
     const iFullDays = oVal.fullDays,
         iWorkingDays = oVal.workdaysLeftExcluding;
     return `
@@ -103,6 +106,7 @@ const getHTML = (oVal) => {
     </head>
     <body>
     <div>
+    <div>App Loaded: ${iEntries}</div>
         <div class="clock">
             <!-- HOUR -->
             <div class="numbers">

@@ -3,6 +3,7 @@ const app = express();
 const port = process.env.PORT || 80;
 const html = require("./html.js");
 
+
 /**
  * Calculates the full working days until the end of march from now on
  * @returns 
@@ -55,7 +56,7 @@ var getWorkingDaysTillEndOfMarch = () => {
     return liTotalWorkdays;
 }
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
 
     let today = new Date();
 
@@ -79,7 +80,7 @@ app.get('/', (req, res) => {
         workdaysLeftExcluding: getWorkingDaysTillEndOfMarch()
     };
     console.log(oResult);
-    res.send(html.getHTML(oResult));
+    res.send(await html.getHTML(oResult));
 })
 
 app.listen(port, () => {
