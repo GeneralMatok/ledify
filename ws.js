@@ -1,3 +1,5 @@
+// Node.js WebSocket server script
+const http = require('http');
 const WebSocketServer = require('websocket').server;
 const server = http.createServer();
 server.listen(9898);
