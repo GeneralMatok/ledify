@@ -1,21 +1,13 @@
 // Node.js WebSocket server script
-const http = require('http');
-const WebSocketServer = require('websocket').server;
-const server = http.createServer();
-server.listen(9898);
-const wsServer = new WebSocketServer({
-    httpServer: server
-});
-wsServer.on('request', function (request) {
-    const connection = request.accept(null, request.origin);
-    connection.on('message', function (message) {
-        console.log('Received Message:', message.utf8Data);
-        setInterval(() => {
-            connection.sendUTF(`This one responds at-->${new Date().getTime()}`);
-        }, 1000);
+const WebSocket = require('ws')
 
-    });
-    connection.on('close', function (reasonCode, description) {
-        console.log('Client has disconnected.');
-    });
-});
+const wss = new WebSocket.Server({ port: 8080 })
+
+wss.on('connection', ws => {
+    ws.on('message', message => {
+        console.log(`Received message => ${message}`)
+    })
+    setInterval(() => {
+        ws.send(`Hello! Message From Server!!${new Date().getTime()}`)
+    }, 1000);
+})
