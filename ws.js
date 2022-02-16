@@ -8,6 +8,11 @@ wss.on('connection', ws => {
         console.log(`Received message => ${message}`)
     })
 
-    ws.send(`Hello! Message From Server!!${new Date().getTime()}`)
+    setInterval(() => {
+        ws.send(JSON.stringify({
+            text: "time sent back",
+            time: new Date().getTime()
+        }));
+    }, 1000);
 
 })

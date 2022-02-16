@@ -104,24 +104,30 @@ const getHTML = async (oVal) => {
             ${getCSS()}
         </style>
         <script>
-            let socket = new WebSocket("wss://${document.location.host}:8080");
+        var connection = new WebSocket('wss://'+window.location.host+':8080');
 
-            // send message from the form
-            document.forms.publish.onsubmit = function() {
-              let outgoingMessage = this.message.value;
-            
-              socket.send(outgoingMessage);
-              return false;
-            };
-            
-            // message received - show the message in div#messages
-            socket.onmessage = function(event) {
-              let message = event.data;
-            
-              let messageElem = document.createElement('div');
-              messageElem.textContent = message;
-              document.getElementById('messages').prepend(messageElem);
-            }
+        connection.onopen = function () {
+          console.error(arguments);
+        };
+      
+        connection.onerror = function (error) {
+          console.error(arguments);
+        };
+      
+        connection.onmessage = function (message) {
+          // try to decode json (I assume that each message
+          // from server is json)
+          try {
+            var json = JSON.parse(message.data);
+            var elem = document.createElement("p");
+            elem.innerText = json.text + json.time;
+            document.querySelector("#messages").appendChild(elem);
+          } catch (e) {
+            console.log('This does not look like a valid JSON: '+            message.data);
+            return;
+          }
+          // handle incoming message
+        };
         </script>
     </head>
     <body>
