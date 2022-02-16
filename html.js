@@ -2,7 +2,7 @@ const db = require("./db.js");
 
 const getCSS = () => {
 
-    return `
+  return `
     @font-face {
         font-family: 'digital-7';
         src: url('../fonts/digital-7.ttf');
@@ -94,19 +94,47 @@ const getCSS = () => {
 }
 
 const getHTML = async (oVal) => {
-    const iEntries = await db.getEntries();
-    const iFullDays = oVal.fullDays,
-        iWorkingDays = oVal.workdaysLeftExcluding;
-    return `
+  const iEntries = await db.getEntries();
+  const iFullDays = oVal.fullDays,
+    iWorkingDays = oVal.workdaysLeftExcluding;
+  return `
     <html>
     <head>
         <style>
             ${getCSS()}
         </style>
+        <script>
+            let socket = new WebSocket("wss://${document.location.host}:8080");
+
+            // send message from the form
+            document.forms.publish.onsubmit = function() {
+              let outgoingMessage = this.message.value;
+            
+              socket.send(outgoingMessage);
+              return false;
+            };
+            
+            // message received - show the message in div#messages
+            socket.onmessage = function(event) {
+              let message = event.data;
+            
+              let messageElem = document.createElement('div');
+              messageElem.textContent = message;
+              document.getElementById('messages').prepend(messageElem);
+            }
+        </script>
     </head>
     <body>
     <div>
     <div>App Loaded: ${iEntries}</div>
+      <form name="publish">
+        <input type="text" name="message">
+        <input type="submit" value="Send">
+      </form>
+    
+      <!-- div with messages -->
+      <div id="messages"></div>
+
         <div class="clock">
             <!-- HOUR -->
             <div class="numbers">
@@ -144,6 +172,8 @@ const getHTML = async (oVal) => {
 };
 
 
+
+
 module.exports = {
-    getHTML: getHTML
+  getHTML: getHTML
 }
