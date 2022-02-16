@@ -7,7 +7,7 @@ wss.on('connection', ws => {
     ws.on('message', message => {
         console.log(`Received message => ${message}`)
     })
-    setInterval(() => {
-        ws.send(`Hello! Message From Server!!${new Date().getTime()}`)
-    }, 1000);
+
+    ws.send(`Hello! Message From Server!!${new Date().getTime()}`)
+
 })
