@@ -104,43 +104,20 @@ const getHTML = async (oVal) => {
             ${getCSS()}
         </style>
         <script>
-        var connection = new WebSocket('wss://'+window.location.host+':8080');
-
-        connection.onopen = function () {
-          console.error(arguments);
+        var host = location.origin.replace(/^http/, 'ws')
+        var ws = new WebSocket(host+":5000");
+        ws.onmessage = function (event) {
+          var li = document.createElement('li');
+          li.innerHTML = JSON.parse(event.data);
+          document.querySelector('#pings').appendChild(li);
         };
-      
-        connection.onerror = function (error) {
-          console.error(arguments);
-        };
-      
-        connection.onmessage = function (message) {
-          // try to decode json (I assume that each message
-          // from server is json)
-          try {
-            var json = JSON.parse(message.data);
-            var elem = document.createElement("p");
-            elem.innerText = json.text + json.time;
-            document.querySelector("#messages").appendChild(elem);
-          } catch (e) {
-            console.log('This does not look like a valid JSON: '+            message.data);
-            return;
-          }
-          // handle incoming message
-        };
-        </script>
+      </script>
     </head>
     <body>
     <div>
     <div>App Loaded: ${iEntries}</div>
-      <form name="publish">
-        <input type="text" name="message">
-        <input type="submit" value="Send">
-      </form>
-    
-      <!-- div with messages -->
-      <div id="messages"></div>
-
+        <h1>Pings</h1>
+        <ul id='pings'></ul>
         <div class="clock">
             <!-- HOUR -->
             <div class="numbers">
